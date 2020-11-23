@@ -1,5 +1,5 @@
 import discord
-import dc_actions
+from modules.dc_actions import Actions
 from typing import Tuple
 from logging import getLogger, DEBUG, StreamHandler
 from dataclasses import dataclass
@@ -28,12 +28,12 @@ class DiscordWrapper:
     client = discord.Client()
 
     @client.event
-    async def on_ready(self):
+    async def on_ready():
         logger.info("Ready to Discord Py Bot")
 
     @client.event
-    async def on_message(self, message):
-        msg_action = self.parse_message(message)
+    async def on_message(message):
+        msg_action = parse_message(message)
         if msg_action[0]:
             msg = msg_action[1].execute(msg_action[2])
             logger.info(f"Send to {msg}")
@@ -41,18 +41,18 @@ class DiscordWrapper:
         logger.info(f"Get log message: {message}")
         await msg_action[1].execute(msg_action[2])
 
-    def parse_message(message: str) -> Tuple[int, str, str]:
-        """受信メッセージの接頭語をもとに解析する
 
-        Args:
-            message (str): 受信メッセージ
+def parse_message(message: str) -> Tuple[int, str, str]:
+    """受信メッセージの接頭語をもとに解析する
 
-        Returns:
-            Tuple[int, str, str]: フラグとアクションと受信メッセージ
-        """
-        for action in dc_actions.Actions:
-            msg = message.content.split("/")
-            if msg[0] == action.name:
-                return 1, action.value, msg[1]
-        # 関係のない文章をログとして取れるようにしたいため
-        return 0, MsgLogger(), message
+    Args:
+        message (str): 受信メッセージ
+    Returns:
+        Tuple[int, str, str]: フラグとアクションと受信メッセージ
+    """
+    for action in Actions:
+        msg = message.content.split("/")
+        if msg[0] == action.name:
+            return 1, action.value, msg[1]
+    # 関係のない文章をログとして取れるようにしたいため
+    return 0, MsgLogger(), message

@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import List
-from actions.gacha import ContentsDownloader, GachaSimulator
+from modules.actions.gacha import ContentsDownloader, GachaSimulator
 
 
 class GachaExecuter:
